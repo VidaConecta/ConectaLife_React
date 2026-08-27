@@ -1,6 +1,6 @@
-import { ListIcon, UserIcon } from "@phosphor-icons/react"
 import { Link } from "react-router-dom"
 import { useState } from "react"
+import { ListIcon, UserIcon } from "@phosphor-icons/react"
  
 function Navbar() {
  
