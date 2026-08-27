@@ -8,7 +8,7 @@ interface CardApolicesProps {
 }
 
 const statusStyles: Record<Apolice['status'], string> = {
-    ATIVO: 'bg-teal-100 text-teal-700',
+    ATIVO: 'bg-emerald-100 text-emerald-700',
     SUSPENSO: 'bg-yellow-100 text-yellow-700',
     CANCELADO: 'bg-red-100 text-red-700',
     FINALIZADO: 'bg-slate-200 text-slate-700',
@@ -21,42 +21,42 @@ function CardApolices({ apolice }: CardApolicesProps) {
     })
 
     return (
-        <div className="flex flex-col gap-2 rounded-2xl border-2 border-slate-200 p-5 shadow-sm">
-            <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-slate-800">
-                    Apólice Nº {apolice.numeroApolice}
-                </h3>
+        <div className="flex flex-col overflow-hidden rounded border border-indigo-900 shadow">
+            <div className="flex items-center justify-between bg-indigo-900 px-4 py-2 text-white">
+                <span className="font-bold">Apólice Nº {apolice.numeroApolice}</span>
 
                 <span className={`rounded-full px-3 py-1 text-xs font-bold ${statusStyles[apolice.status]}`}>
                     {apolice.status}
                 </span>
             </div>
 
-            <p className="text-slate-600">
-                Cliente: <span className="font-semibold">{apolice.cliente?.nome}</span>
-            </p>
+            <div className="flex flex-1 flex-col gap-1 bg-indigo-50 px-4 py-3">
+                <p className="text-slate-700">
+                    Cliente: <span className="font-semibold">{apolice.cliente?.nome}</span>
+                </p>
 
-            <p className="text-slate-600">
-                Cobertura: <span className="font-semibold">{valorFormatado}</span>
-            </p>
+                <p className="text-slate-700">
+                    Cobertura: <span className="font-semibold">{valorFormatado}</span>
+                </p>
 
-            <p className="text-slate-600">
-                Vigência até: <span className="font-semibold">{dayjs(apolice.dataVigencia).format('DD/MM/YYYY')}</span>
-            </p>
+                <p className="text-sm text-slate-500">
+                    Vigência: {dayjs(apolice.dataVigencia).format('DD/MM/YYYY')}
+                </p>
+            </div>
 
-            <div className="mt-3 flex justify-end gap-3">
+            <div className="flex">
                 <Link
                     to={`/editarapolice/${apolice.id}`}
-                    className="rounded-lg bg-teal-500 px-4 py-2 text-sm font-bold text-white transition duration-200 hover:bg-teal-700"
+                    className="flex-1 bg-indigo-600 py-2 text-center font-semibold text-white transition hover:bg-indigo-700"
                 >
                     Editar
                 </Link>
 
                 <Link
                     to={`/deletarapolice/${apolice.id}`}
-                    className="rounded-lg bg-red-400 px-4 py-2 text-sm font-bold text-white transition duration-200 hover:bg-red-700"
+                    className="flex-1 bg-red-500 py-2 text-center font-semibold text-white transition hover:bg-red-700"
                 >
-                    Excluir
+                    Deletar
                 </Link>
             </div>
         </div>

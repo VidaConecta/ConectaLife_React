@@ -1,5 +1,4 @@
 import type Cliente from "./Cliente"
-import type Usuario from "./Usuario"
 
 export default interface Apolice {
     id: number
@@ -8,5 +7,4 @@ export default interface Apolice {
     valorCobertura: number
     dataVigencia: string
     cliente: Cliente
-    usuario: Usuario
 }
