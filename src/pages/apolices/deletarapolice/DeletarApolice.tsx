@@ -1,41 +1,32 @@
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { ClipLoader } from "react-spinners"
-import { FaTrash, FaXmark } from "react-icons/fa6"
 
-import { AuthContext } from "../../../contexts/AuthContext"
-import { deletarApolice, listarApolicePorId } from "../../../services/Apolice"
+import { apoliceService } from "../../../services/Apolice"
 import type Apolice from "../../../models/Apolice"
 
 function DeletarApolice() {
     const navigate = useNavigate()
     const { id } = useParams<{ id: string }>()
-    const { usuario } = useContext(AuthContext)
 
-    const [apolice, setApolice] = useState<Apolice>({} as Apolice)
+    const [apolice, setApolice] = useState<Apolice | null>(null)
     const [isLoading, setIsLoading] = useState<boolean>(false)
-
-    const header = {
-        headers: { Authorization: usuario.token },
-    }
-
-    useEffect(() => {
-        if (usuario.token === '') {
-            navigate('/')
-        }
-    }, [usuario.token])
 
     useEffect(() => {
         if (id !== undefined) {
-            listarApolicePorId(Number(id), setApolice, header)
+            apoliceService.buscarPorId(Number(id))
+                .then(setApolice)
+                .catch((error) => console.error('Erro ao buscar apólice!', error))
         }
     }, [id])
 
     async function confirmarExclusao() {
+        if (id === undefined) return
+
         setIsLoading(true)
 
         try {
-            await deletarApolice(Number(id), header)
+            await apoliceService.deletar(Number(id))
             navigate('/apolices')
         } catch (error) {
             console.error('Erro ao deletar apólice!', error)
@@ -46,14 +37,14 @@ function DeletarApolice() {
 
     return (
         <div className="flex min-h-screen items-center justify-center px-4">
-            <div className="w-full max-w-md rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-2xl">
-                <h2 className="mb-4 text-xl font-bold text-slate-800">
+            <div className="w-full max-w-md rounded border-2 border-indigo-900 bg-white p-6 shadow-2xl">
+                <h2 className="mb-4 text-xl font-bold text-indigo-900">
                     Excluir Apólice
                 </h2>
 
                 <p className="mb-6 text-slate-600">
                     Tem certeza que deseja excluir a apólice nº{' '}
-                    <span className="font-semibold">{apolice.numeroApolice}</span>?
+                    <span className="font-semibold">{apolice?.numeroApolice}</span>?
                     Essa ação não pode ser desfeita.
                 </p>
 
@@ -62,31 +53,21 @@ function DeletarApolice() {
                         type="button"
                         onClick={() => navigate('/apolices')}
                         disabled={isLoading}
-                        className="rounded-lg text-white bg-slate-400 hover:bg-slate-600
-                        w-1/2 py-2 transition duration-200
-                        disabled:cursor-not-allowed disabled:opacity-60
-                        flex items-center justify-center gap-2"
+                        className="w-1/2 rounded bg-slate-400 py-2 text-white transition
+                        hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        <FaXmark size={18} />
-                        <span>Cancelar</span>
+                        Cancelar
                     </button>
 
                     <button
                         type="button"
                         onClick={confirmarExclusao}
                         disabled={isLoading}
-                        className="rounded-lg text-white bg-red-500 hover:bg-red-700
-                        w-1/2 py-2 flex items-center justify-center gap-2
-                        transition duration-200 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="flex w-1/2 items-center justify-center gap-2 rounded bg-red-500
+                        py-2 text-white transition hover:bg-red-700
+                        disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        {isLoading ? (
-                            <ClipLoader color="#ffffff" size={20} />
-                        ) : (
-                            <>
-                                <FaTrash size={18} />
-                                <span>Excluir</span>
-                            </>
-                        )}
+                        {isLoading ? <ClipLoader color="#ffffff" size={20} /> : 'Excluir'}
                     </button>
                 </div>
             </div>

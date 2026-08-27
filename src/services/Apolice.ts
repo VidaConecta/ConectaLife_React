@@ -1,43 +1,39 @@
 import type Apolice from "../models/Apolice"
 import { api } from "./Service"
 
-// Função listar todas as apólices
+export const apoliceService = {
+  // POST /apolices
+  cadastrar: async (dadosApolice: Apolice): Promise<Apolice> => {
+    const resposta = await api.post<Apolice>('/apolices', dadosApolice)
+    return resposta.data
+  },
 
-export const listarApolices = async (setApolices: Function, header: Object) => {
-    const resposta = await api.get('/apolices', header)
-    setApolices(resposta.data)
-}
+  // GET /apolices
+  listarTodos: async (): Promise<Apolice[]> => {
+    const resposta = await api.get<Apolice[]>('/apolices')
+    return resposta.data
+  },
 
-// Função listar apólice por id
+  // GET /apolices/{id}
+  buscarPorId: async (id: number): Promise<Apolice> => {
+    const resposta = await api.get<Apolice>(`/apolices/${id}`)
+    return resposta.data
+  },
 
-export const listarApolicePorId = async (id: number, setApolice: Function, header: Object) => {
-    const resposta = await api.get(`/apolices/${id}`, header)
-    setApolice(resposta.data)
-}
+  // PUT /apolices/{id}
+  atualizar: async (id: number, dadosApolice: Apolice): Promise<Apolice> => {
+    const resposta = await api.put<Apolice>(`/apolices/${id}`, dadosApolice)
+    return resposta.data
+  },
 
-// Função cadastrar apólice
+  // DELETE /apolices/{id}
+  deletar: async (id: number): Promise<void> => {
+    await api.delete(`/apolices/${id}`)
+  },
 
-export const cadastrarApolice = async (apolice: Apolice, setApolice: Function, header: Object) => {
-    const resposta = await api.post('/apolices', apolice, header)
-    setApolice(resposta.data)
-}
-
-// Função atualizar apólice
-
-export const atualizarApolice = async (apolice: Apolice, setApolice: Function, header: Object) => {
-    const resposta = await api.put(`/apolices/${apolice.id}`, apolice, header)
-    setApolice(resposta.data)
-}
-
-// Função deletar apólice
-
-export const deletarApolice = async (id: number, header: Object) => {
-    await api.delete(`/apolices/${id}`, header)
-}
-
-// Função validar cobertura da apólice
-
-export const validarCoberturaApolice = async (id: number, coberturas: Object, setResultado: Function, header: Object) => {
-    const resposta = await api.post(`/apolices/${id}/validar-cobertura`, coberturas, header)
-    setResultado(resposta.data)
+  // POST /apolices/{id}/validar-cobertura
+  validarCobertura: async (id: number, coberturas: Record<string, boolean>): Promise<unknown> => {
+    const resposta = await api.post(`/apolices/${id}/validar-cobertura`, coberturas)
+    return resposta.data
+  },
 }

@@ -1,16 +1,15 @@
-import { useContext, useEffect, useState, type ChangeEvent, type FormEvent } from "react"
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { ClipLoader } from "react-spinners"
-import { FaCheck, FaXmark } from "react-icons/fa6"
 
-import { AuthContext } from "../../../contexts/AuthContext"
-import { atualizarApolice, cadastrarApolice, listarApolicePorId } from "../../../services/Apolice"
+import { apoliceService } from "../../../services/Apolice"
+import { clienteService } from "../../../services/ClienteService"
 import type Apolice from "../../../models/Apolice"
+import type Cliente from "../../../models/Cliente"
 
 function FormApolice() {
     const navigate = useNavigate()
     const { id } = useParams<{ id: string }>()
-    const { usuario } = useContext(AuthContext)
 
     const [apolice, setApolice] = useState<Apolice>({
         id: 0,
@@ -18,25 +17,23 @@ function FormApolice() {
         status: 'ATIVO',
         valorCobertura: 0,
         dataVigencia: '',
-        cliente: { id: 0 } as Apolice['cliente'],
-        usuario: { id: usuario.id } as Apolice['usuario'],
+        cliente: { id: 0, nome: '', dataNascimento: '', cpf: '', email: '' },
     })
 
+    const [clientes, setClientes] = useState<Cliente[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const header = {
-        headers: { Authorization: usuario.token },
-    }
-
     useEffect(() => {
-        if (usuario.token === '') {
-            navigate('/')
-        }
-    }, [usuario.token])
+        clienteService.listarTodos()
+            .then(setClientes)
+            .catch((error) => console.error('Erro ao buscar clientes!', error))
+    }, [])
 
     useEffect(() => {
         if (id !== undefined) {
-            listarApolicePorId(Number(id), setApolice, header)
+            apoliceService.buscarPorId(Number(id))
+                .then(setApolice)
+                .catch((error) => console.error('Erro ao buscar apólice!', error))
         }
     }, [id])
 
@@ -44,10 +41,12 @@ function FormApolice() {
         const { name, value } = e.target
 
         if (name === 'clienteId') {
-            setApolice({
-                ...apolice,
-                cliente: { ...apolice.cliente, id: Number(value) },
-            })
+            const cliente = clientes.find((c) => c.id === Number(value))
+
+            if (cliente) {
+                setApolice({ ...apolice, cliente })
+            }
+
             return
         }
 
@@ -63,9 +62,9 @@ function FormApolice() {
 
         try {
             if (id !== undefined) {
-                await atualizarApolice(apolice, setApolice, header)
+                await apoliceService.atualizar(Number(id), apolice)
             } else {
-                await cadastrarApolice(apolice, setApolice, header)
+                await apoliceService.cadastrar(apolice)
             }
 
             navigate('/apolices')
@@ -82,29 +81,29 @@ function FormApolice() {
                 className="flex w-full max-w-md flex-col gap-3"
                 onSubmit={salvar}
             >
-                <h2 className="text-center text-3xl font-bold text-slate-900">
+                <h2 className="text-center text-3xl font-bold text-indigo-900">
                     {id !== undefined ? 'Editar Apólice' : 'Cadastrar Apólice'}
                 </h2>
 
-                <div className="flex flex-col w-full">
+                <div className="flex w-full flex-col">
                     <label htmlFor="numeroApolice">Número da Apólice</label>
                     <input
                         type="text"
                         id="numeroApolice"
                         name="numeroApolice"
-                        className="border-2 border-slate-700 rounded p-2 w-full"
+                        className="w-full rounded border-2 border-indigo-900 p-2"
                         required
                         value={apolice.numeroApolice}
                         onChange={atualizarEstado}
                     />
                 </div>
 
-                <div className="flex flex-col w-full">
+                <div className="flex w-full flex-col">
                     <label htmlFor="status">Status</label>
                     <select
                         id="status"
                         name="status"
-                        className="border-2 border-slate-700 rounded p-2 w-full"
+                        className="w-full rounded border-2 border-indigo-900 p-2"
                         value={apolice.status}
                         onChange={atualizarEstado}
                     >
@@ -115,7 +114,7 @@ function FormApolice() {
                     </select>
                 </div>
 
-                <div className="flex flex-col w-full">
+                <div className="flex w-full flex-col">
                     <label htmlFor="valorCobertura">Valor da Cobertura (R$)</label>
                     <input
                         type="number"
@@ -123,69 +122,64 @@ function FormApolice() {
                         name="valorCobertura"
                         min={0}
                         step="0.01"
-                        className="border-2 border-slate-700 rounded p-2 w-full"
+                        className="w-full rounded border-2 border-indigo-900 p-2"
                         required
                         value={apolice.valorCobertura}
                         onChange={atualizarEstado}
                     />
                 </div>
 
-                <div className="flex flex-col w-full">
+                <div className="flex w-full flex-col">
                     <label htmlFor="dataVigencia">Vigência</label>
                     <input
                         type="date"
                         id="dataVigencia"
                         name="dataVigencia"
-                        className="border-2 border-slate-700 rounded p-2 w-full"
+                        className="w-full rounded border-2 border-indigo-900 p-2"
                         required
                         value={apolice.dataVigencia}
                         onChange={atualizarEstado}
                     />
                 </div>
 
-                <div className="flex flex-col w-full">
-                    <label htmlFor="clienteId">ID do Cliente</label>
-                    <input
-                        type="number"
+                <div className="flex w-full flex-col">
+                    <label htmlFor="clienteId">Cliente</label>
+                    <select
                         id="clienteId"
                         name="clienteId"
-                        min={1}
-                        className="border-2 border-slate-700 rounded p-2 w-full"
+                        className="w-full rounded border-2 border-indigo-900 p-2"
                         required
                         value={apolice.cliente.id || ''}
                         onChange={atualizarEstado}
-                    />
+                    >
+                        <option value="" disabled>Selecione um cliente</option>
+                        {clientes.map((cliente) => (
+                            <option key={cliente.id} value={cliente.id}>
+                                {cliente.nome}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
-                <div className="flex flex-col sm:flex-row justify-around w-full gap-3 sm:gap-8 mt-2">
+                <div className="mt-2 flex w-full flex-col justify-around gap-3 sm:flex-row sm:gap-8">
                     <button
                         type="button"
                         onClick={() => navigate('/apolices')}
                         disabled={isLoading}
-                        className="rounded-lg text-white bg-red-400 hover:bg-red-700
-                        w-full sm:w-1/2 py-2 transition duration-200
-                        disabled:cursor-not-allowed disabled:opacity-60
-                        flex items-center justify-center gap-2"
+                        className="w-full rounded bg-slate-400 py-2 text-white transition
+                        hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-60 sm:w-1/2"
                     >
-                        <FaXmark size={18} />
-                        <span>Cancelar</span>
+                        Cancelar
                     </button>
 
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="rounded-lg text-white bg-teal-500 hover:bg-teal-700
-                        w-full sm:w-1/2 py-2 flex items-center justify-center gap-2
-                        transition duration-200 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="flex w-full items-center justify-center gap-2 rounded bg-indigo-700
+                        py-2 text-white transition hover:bg-indigo-800
+                        disabled:cursor-not-allowed disabled:opacity-60 sm:w-1/2"
                     >
-                        {isLoading ? (
-                            <ClipLoader color="#ffffff" size={20} />
-                        ) : (
-                            <>
-                                <FaCheck size={18} />
-                                <span>Salvar</span>
-                            </>
-                        )}
+                        {isLoading ? <ClipLoader color="#ffffff" size={20} /> : 'Salvar'}
                     </button>
                 </div>
             </form>
