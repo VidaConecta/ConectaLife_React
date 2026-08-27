@@ -19,12 +19,10 @@ function App() {
 
                 <Routes>
                     <Route path="/" element={<Home />} />
-
-                    <Route path="/apolices" element={<ListarApolices />} />
+                     <Route path="/apolices" element={<ListarApolices />} />
                     <Route path="/cadastrarapolice" element={<FormApolice />} />
                     <Route path="/editarapolice/:id" element={<FormApolice />} />
                     <Route path="/deletarapolice/:id" element={<DeletarApolice />} />
-
                     <Route path="/cadastrarcliente" element={<FormCliente />} />
                     <Route
                         path="/clientes"
@@ -47,5 +45,6 @@ function App() {
         </>
     );
 }
-
+ 
 export default App;
+ 
