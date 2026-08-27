@@ -11,10 +11,10 @@ function Cadastro() {
     const [usuario, setUsuario] = useState<Usuario>({
         id: 0,
         nome: '',
-        usuario: '',
+        email: '',
         senha: '',
-        foto: '',
         dataNascimento: '',
+        cpf: '',
     })
 
     const [confirmarSenha, setConfirmarSenha] = useState<string>('')
@@ -89,7 +89,7 @@ function Cadastro() {
         <>
             <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen place-items-center font-bold">
                 <div
-                    className="bg-[url('https://ik.imagekit.io/vzr6ryejm/games/fundo_03.jpg?updatedAt=1714988179386')]
+                    className="bg-[url('https://ik.imagekit.io/5eywr3ioq/Imagens%20Projeto%20Integrador/cadastrocoectalife.jpg')]
                     lg:block hidden bg-no-repeat w-full min-h-screen bg-cover bg-center"
                 ></div>
 
