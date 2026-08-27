@@ -25,9 +25,9 @@ function Navbar() {
             aria-label="Ir para a página inicial"
           >
             <img
-              src="https://ik.imagekit.io/lojagames/Conecta.jpg"
-              alt="Logo ConectaLife"
-              className="object-contain w-12 h-12 rounded-full md:w-14 md:h-14"
+              src="https://ik.imagekit.io/lojagames/Batimentos%20Cardiacos.png"
+              alt="Batimento cardíaco"
+              className="object-contain w-16 h-8 md:w-20 md:h-10"
             />
 
             <div className="hidden sm:block">
