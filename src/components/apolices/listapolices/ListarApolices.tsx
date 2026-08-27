@@ -4,7 +4,7 @@ import { ClipLoader } from "react-spinners"
 
 import { apoliceService } from "../../../services/Apolice"
 import type Apolice from "../../../models/Apolice"
-import CardApolices from "../../../components/apolices/cardapolices/CardApolices"
+import CardApolices from "../cardapolices/CardApolices"
 
 function ListarApolices() {
     const [apolices, setApolices] = useState<Apolice[]>([])
