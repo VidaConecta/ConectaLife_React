@@ -1,190 +1,237 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import { ClipLoader } from "react-spinners"
+import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { NumericFormat } from 'react-number-format';
+import { ClipLoader } from "react-spinners";
+import type Apolice from "../../../models/Apolice";
+import type Cliente from "../../../models/Cliente";
+import { apoliceService } from "../../../services/Apolice";
+import { clienteService } from "../../../services/ClienteService";
 
-import { apoliceService } from "../../../services/Apolice"
-import { clienteService } from "../../../services/ClienteService"
-import type Apolice from "../../../models/Apolice"
-import type Cliente from "../../../models/Cliente"
-
+// Formulário usado tanto para cadastrar quanto para editar uma Apólice
 function FormApolice() {
-    const navigate = useNavigate()
-    const { id } = useParams<{ id: string }>()
 
-    const [apolice, setApolice] = useState<Apolice>({
-        id: 0,
-        numeroApolice: '',
-        status: 'ATIVO',
-        valorCobertura: 0,
-        dataVigencia: '',
-        cliente: { id: 0, nome: '', dataNascimento: '', cpf: '', email: '' },
-    })
+	const navigate = useNavigate();
 
-    const [clientes, setClientes] = useState<Cliente[]>([])
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [apolice, setApolice] = useState<Apolice>({} as Apolice);
+	const [clientes, setClientes] = useState<Cliente[]>([]);
+	const [clienteSelecionado, setClienteSelecionado] = useState<Cliente>({} as Cliente);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const { id } = useParams<{ id: string }>();
 
-    useEffect(() => {
-        clienteService.listarTodos()
-            .then(setClientes)
-            .catch((error) => console.error('Erro ao buscar clientes!', error))
-    }, [])
+	async function buscarPorId(id: string) {
+		try {
+			const dados = await apoliceService.buscarPorId(Number(id));
+			setApolice(dados);
+		} catch (error) {
+			alert('Erro ao buscar a apólice.');
+		}
+	}
 
-    useEffect(() => {
-        if (id !== undefined) {
-            apoliceService.buscarPorId(Number(id))
-                .then(setApolice)
-                .catch((error) => console.error('Erro ao buscar apólice!', error))
-        }
-    }, [id])
+	async function buscarClientes() {
+		try {
+			const dados = await clienteService.listarTodos();
+			setClientes(dados);
+		} catch (error) {
+			alert('Erro ao buscar clientes.');
+		}
+	}
 
-    function atualizarEstado(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-        const { name, value } = e.target
+	useEffect(() => {
+		buscarClientes();
+	}, []);
 
-        if (name === 'clienteId') {
-            const cliente = clientes.find((c) => c.id === Number(value))
+	useEffect(() => {
+		if (id !== undefined) {
+			buscarPorId(id);
+		}
+	}, [id]);
 
-            if (cliente) {
-                setApolice({ ...apolice, cliente })
-            }
+	useEffect(() => {
+		if (apolice.cliente !== undefined) {
+			setClienteSelecionado(apolice.cliente);
+		}
+	}, [apolice]);
 
-            return
-        }
+	useEffect(() => {
+		setApolice({
+			...apolice,
+			cliente: clienteSelecionado,
+		});
+	}, [clienteSelecionado]);
 
-        setApolice({
-            ...apolice,
-            [name]: name === 'valorCobertura' ? Number(value) : value,
-        })
-    }
+	function atualizarEstado(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+		setApolice({
+			...apolice,
+			[e.target.name]: e.target.value,
+		});
+	}
 
-    async function salvar(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault()
-        setIsLoading(true)
+	function atualizarValorCobertura(valor: number | undefined) {
+		setApolice({
+			...apolice,
+			valorCobertura: valor ?? 0,
+		});
+	}
 
-        try {
-            if (id !== undefined) {
-                await apoliceService.atualizar(Number(id), apolice)
-            } else {
-                await apoliceService.cadastrar(apolice)
-            }
+	function atualizarCliente(e: ChangeEvent<HTMLSelectElement>) {
+		const cliente = clientes.find((c) => c.id === Number(e.target.value));
+		if (cliente !== undefined) {
+			setClienteSelecionado(cliente);
+		}
+	}
 
-            navigate('/apolices')
-        } catch (error) {
-            console.error('Erro ao salvar apólice!', error)
-        } finally {
-            setIsLoading(false)
-        }
-    }
+	function retornar() {
+		navigate('/apolices');
+	}
 
-    return (
-        <div className="flex min-h-screen items-center justify-center px-4">
-            <form
-                className="flex w-full max-w-md flex-col gap-3"
-                onSubmit={salvar}
-            >
-                <h2 className="text-center text-3xl font-bold text-indigo-900">
-                    {id !== undefined ? 'Editar Apólice' : 'Cadastrar Apólice'}
-                </h2>
+	async function gerarNovaApolice(e: FormEvent<HTMLFormElement>) {
+		e.preventDefault();
+		setIsLoading(true);
 
-                <div className="flex w-full flex-col">
-                    <label htmlFor="numeroApolice">Número da Apólice</label>
-                    <input
-                        type="text"
-                        id="numeroApolice"
-                        name="numeroApolice"
-                        className="w-full rounded border-2 border-indigo-900 p-2"
-                        required
-                        value={apolice.numeroApolice}
-                        onChange={atualizarEstado}
-                    />
-                </div>
+		if (id !== undefined) {
+			try {
+				await apoliceService.atualizar(Number(id), apolice);
+				alert('Apólice atualizada com sucesso!');
+			} catch (error) {
+				alert('Erro ao atualizar a apólice.');
+			}
+		} else {
+			try {
+				await apoliceService.cadastrar(apolice);
+				alert('Apólice cadastrada com sucesso!');
+			} catch (error) {
+				alert('Erro ao cadastrar a apólice.');
+			}
+		}
 
-                <div className="flex w-full flex-col">
-                    <label htmlFor="status">Status</label>
-                    <select
-                        id="status"
-                        name="status"
-                        className="w-full rounded border-2 border-indigo-900 p-2"
-                        value={apolice.status}
-                        onChange={atualizarEstado}
-                    >
-                        <option value="ATIVO">Ativo</option>
-                        <option value="SUSPENSO">Suspenso</option>
-                        <option value="CANCELADO">Cancelado</option>
-                        <option value="FINALIZADO">Finalizado</option>
-                    </select>
-                </div>
+		setIsLoading(false);
+		retornar();
+	}
 
-                <div className="flex w-full flex-col">
-                    <label htmlFor="valorCobertura">Valor da Cobertura (R$)</label>
-                    <input
-                        type="number"
-                        id="valorCobertura"
-                        name="valorCobertura"
-                        min={0}
-                        step="0.01"
-                        className="w-full rounded border-2 border-indigo-900 p-2"
-                        required
-                        value={apolice.valorCobertura}
-                        onChange={atualizarEstado}
-                    />
-                </div>
+	return (
+		<main className="grow w-full max-w-3xl mx-auto px-4 md:px-8 py-20 md:py-24 flex flex-col gap-8">
+			<div className="flex flex-col gap-2">
+				<h1 className="text-3xl md:text-4xl font-semibold text-slate-800 text-center">
+					{id === undefined ? 'Cadastrar Apólice' : 'Editar Apólice'}
+				</h1>
+			</div>
 
-                <div className="flex w-full flex-col">
-                    <label htmlFor="dataVigencia">Vigência</label>
-                    <input
-                        type="date"
-                        id="dataVigencia"
-                        name="dataVigencia"
-                        className="w-full rounded border-2 border-indigo-900 p-2"
-                        required
-                        value={apolice.dataVigencia}
-                        onChange={atualizarEstado}
-                    />
-                </div>
+			<form
+				className="flex flex-col gap-5 bg-white border border-slate-200 rounded-lg p-6 md:p-8"
+				onSubmit={gerarNovaApolice}
+			>
+				<div className="flex flex-col gap-2">
+					<label htmlFor="numeroApolice" className="text-sm font-medium text-slate-700">
+						Número da Apólice
+					</label>
+					<input
+						id="numeroApolice"
+						name="numeroApolice"
+						type="text"
+						required
+						value={apolice.numeroApolice ?? ''}
+						onChange={atualizarEstado}
+						className="border border-slate-300 rounded-lg px-4 py-2 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600"
+						placeholder="Número da apólice"
+					/>
+				</div>
 
-                <div className="flex w-full flex-col">
-                    <label htmlFor="clienteId">Cliente</label>
-                    <select
-                        id="clienteId"
-                        name="clienteId"
-                        className="w-full rounded border-2 border-indigo-900 p-2"
-                        required
-                        value={apolice.cliente.id || ''}
-                        onChange={atualizarEstado}
-                    >
-                        <option value="" disabled>Selecione um cliente</option>
-                        {clientes.map((cliente) => (
-                            <option key={cliente.id} value={cliente.id}>
-                                {cliente.nome}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+				<div className="flex flex-col gap-2">
+					<label htmlFor="status" className="text-sm font-medium text-slate-700">
+						Status
+					</label>
+					<select
+						id="status"
+						name="status"
+						value={apolice.status ?? ''}
+						onChange={atualizarEstado}
+						className="border border-slate-300 rounded-lg px-4 py-2 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600"
+					>
+						<option value="" disabled>Selecione um status</option>
+						<option value="ATIVO">Ativo</option>
+						<option value="SUSPENSO">Suspenso</option>
+						<option value="CANCELADO">Cancelado</option>
+						<option value="FINALIZADO">Finalizado</option>
+					</select>
+				</div>
 
-                <div className="mt-2 flex w-full flex-col justify-around gap-3 sm:flex-row sm:gap-8">
-                    <button
-                        type="button"
-                        onClick={() => navigate('/apolices')}
-                        disabled={isLoading}
-                        className="w-full rounded bg-slate-400 py-2 text-white transition
-                        hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-60 sm:w-1/2"
-                    >
-                        Cancelar
-                    </button>
+				<div className="flex flex-col gap-2">
+					<label htmlFor="valorCobertura" className="text-sm font-medium text-slate-700">
+						Valor da Cobertura (R$)
+					</label>
+					<NumericFormat
+						id="valorCobertura"
+						name="valorCobertura"
+						thousandSeparator="."
+						decimalSeparator=","
+						decimalScale={2}
+						fixedDecimalScale
+						allowNegative={false}
+						prefix="R$ "
+						value={apolice.valorCobertura ?? ''}
+						onValueChange={(values) => atualizarValorCobertura(values.floatValue)}
+						className="border border-slate-300 rounded-lg px-4 py-2 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600"
+						placeholder="R$ 0,00"
+					/>
+				</div>
 
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className="flex w-full items-center justify-center gap-2 rounded bg-indigo-700
-                        py-2 text-white transition hover:bg-indigo-800
-                        disabled:cursor-not-allowed disabled:opacity-60 sm:w-1/2"
-                    >
-                        {isLoading ? <ClipLoader color="#ffffff" size={20} /> : 'Salvar'}
-                    </button>
-                </div>
-            </form>
-        </div>
-    )
+				<div className="flex flex-col gap-2">
+					<label htmlFor="dataVigencia" className="text-sm font-medium text-slate-700">
+						Vigência
+					</label>
+					<input
+						id="dataVigencia"
+						name="dataVigencia"
+						type="date"
+						required
+						value={apolice.dataVigencia ?? ''}
+						onChange={atualizarEstado}
+						className="border border-slate-300 rounded-lg px-4 py-2 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600"
+					/>
+				</div>
+
+				<div className="flex flex-col gap-2">
+					<label htmlFor="cliente" className="text-sm font-medium text-slate-700">
+						Cliente
+					</label>
+					<select
+						id="cliente"
+						name="cliente"
+						value={clienteSelecionado.id ?? ''}
+						onChange={atualizarCliente}
+						className="border border-slate-300 rounded-lg px-4 py-2 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600"
+					>
+						<option value="" disabled>Selecione um Cliente</option>
+						{clientes.map((cliente) => (
+							<option key={cliente.id} value={cliente.id}>
+								{cliente.nome}
+							</option>
+						))}
+					</select>
+				</div>
+
+				<div className="flex items-center justify-center gap-3 mt-2">
+					<button
+						type="submit"
+						disabled={isLoading}
+						className="bg-blue-600 text-white text-base px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-60 flex items-center justify-center min-w-40"
+					>
+						{isLoading ?
+							<ClipLoader color="#ffffff" size={24} /> :
+							<span>{id === undefined ? 'Cadastrar Apólice' : 'Atualizar'}</span>
+						}
+					</button>
+					<button
+						type="button"
+						onClick={retornar}
+						className="text-base px-6 py-3 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors font-medium"
+					>
+						Cancelar
+					</button>
+				</div>
+			</form>
+		</main>
+	)
 }
 
 export default FormApolice

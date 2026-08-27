@@ -1,66 +1,44 @@
-import { Link } from "react-router-dom"
-import dayjs from "dayjs"
-
-import type Apolice from "../../../models/Apolice"
+import { PencilSimpleIcon, TrashSimpleIcon } from "@phosphor-icons/react";
+import { Link } from "react-router-dom";
+import type Apolice from "../../../models/Apolice";
 
 interface CardApolicesProps {
-    apolice: Apolice
-}
-
-const statusStyles: Record<Apolice['status'], string> = {
-    ATIVO: 'bg-emerald-100 text-emerald-700',
-    SUSPENSO: 'bg-yellow-100 text-yellow-700',
-    CANCELADO: 'bg-red-100 text-red-700',
-    FINALIZADO: 'bg-slate-200 text-slate-700',
+	apolice: Apolice
 }
 
 function CardApolices({ apolice }: CardApolicesProps) {
-    const valorFormatado = apolice.valorCobertura.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-    })
-
-    return (
-        <div className="flex flex-col overflow-hidden rounded border border-indigo-900 shadow">
-            <div className="flex items-center justify-between bg-indigo-900 px-4 py-2 text-white">
-                <span className="font-bold">Apólice Nº {apolice.numeroApolice}</span>
-
-                <span className={`rounded-full px-3 py-1 text-xs font-bold ${statusStyles[apolice.status]}`}>
-                    {apolice.status}
-                </span>
-            </div>
-
-            <div className="flex flex-1 flex-col gap-1 bg-indigo-50 px-4 py-3">
-                <p className="text-slate-700">
-                    Cliente: <span className="font-semibold">{apolice.cliente?.nome}</span>
-                </p>
-
-                <p className="text-slate-700">
-                    Cobertura: <span className="font-semibold">{valorFormatado}</span>
-                </p>
-
-                <p className="text-sm text-slate-500">
-                    Vigência: {dayjs(apolice.dataVigencia).format('DD/MM/YYYY')}
-                </p>
-            </div>
-
-            <div className="flex">
-                <Link
-                    to={`/editarapolice/${apolice.id}`}
-                    className="flex-1 bg-indigo-600 py-2 text-center font-semibold text-white transition hover:bg-indigo-700"
-                >
-                    Editar
-                </Link>
-
-                <Link
-                    to={`/deletarapolice/${apolice.id}`}
-                    className="flex-1 bg-red-500 py-2 text-center font-semibold text-white transition hover:bg-red-700"
-                >
-                    Deletar
-                </Link>
-            </div>
-        </div>
-    )
+	return (
+		<div className="flex flex-col w-full max-w-sm md:max-w-64 bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-lg transition-all">
+			<div className="p-4 flex flex-col gap-1">
+				<h3 className="text-base font-semibold text-slate-800 text-center line-clamp-2">
+					Apólice Nº {apolice.numeroApolice}
+				</h3>
+				<p className="text-sm text-slate-500 text-center">{apolice.cliente?.nome}</p>
+				<p className="text-lg font-semibold text-slate-800 text-center mt-2">
+					{apolice.valorCobertura.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+				</p>
+				<span className="text-xs font-medium text-blue-700 uppercase tracking-wide text-center">
+					{apolice.status}
+				</span>
+				<div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-200">
+					<Link
+						to={`/editarapolice/${apolice.id}`}
+						className="flex items-center justify-center gap-1 flex-1 text-sm font-medium text-blue-700 hover:bg-blue-50 py-2 rounded-lg transition-colors"
+					>
+						<PencilSimpleIcon size={18} />
+						Editar
+					</Link>
+					<Link
+						to={`/deletarapolice/${apolice.id}`}
+						className="flex items-center justify-center gap-1 flex-1 text-sm font-medium text-red-600 hover:bg-red-50 py-2 rounded-lg transition-colors"
+					>
+						<TrashSimpleIcon size={18} />
+						Excluir
+					</Link>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default CardApolices

@@ -1,78 +1,92 @@
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { WarningCircleIcon } from '@phosphor-icons/react'
 import { ClipLoader } from "react-spinners"
-
-import { apoliceService } from "../../../services/Apolice"
 import type Apolice from "../../../models/Apolice"
+import { apoliceService } from "../../../services/Apolice"
 
+// Página de confirmação de exclusão de uma Apólice
 function DeletarApolice() {
-    const navigate = useNavigate()
-    const { id } = useParams<{ id: string }>()
 
-    const [apolice, setApolice] = useState<Apolice | null>(null)
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+	const navigate = useNavigate()
 
-    useEffect(() => {
-        if (id !== undefined) {
-            apoliceService.buscarPorId(Number(id))
-                .then(setApolice)
-                .catch((error) => console.error('Erro ao buscar apólice!', error))
-        }
-    }, [id])
+	const [apolice, setApolice] = useState<Apolice>({} as Apolice)
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    async function confirmarExclusao() {
-        if (id === undefined) return
+	const { id } = useParams<{ id: string }>()
 
-        setIsLoading(true)
+	async function buscarPorId(id: string) {
+		try {
+			const dados = await apoliceService.buscarPorId(Number(id))
+			setApolice(dados)
+		} catch (error) {
+			alert('Erro ao buscar a apólice.')
+		}
+	}
 
-        try {
-            await apoliceService.deletar(Number(id))
-            navigate('/apolices')
-        } catch (error) {
-            console.error('Erro ao deletar apólice!', error)
-        } finally {
-            setIsLoading(false)
-        }
-    }
+	useEffect(() => {
+		if (id !== undefined) {
+			buscarPorId(id)
+		}
+	}, [id])
 
-    return (
-        <div className="flex min-h-screen items-center justify-center px-4">
-            <div className="w-full max-w-md rounded border-2 border-indigo-900 bg-white p-6 shadow-2xl">
-                <h2 className="mb-4 text-xl font-bold text-indigo-900">
-                    Excluir Apólice
-                </h2>
+	async function deletarApolice() {
+		setIsLoading(true)
 
-                <p className="mb-6 text-slate-600">
-                    Tem certeza que deseja excluir a apólice nº{' '}
-                    <span className="font-semibold">{apolice?.numeroApolice}</span>?
-                    Essa ação não pode ser desfeita.
-                </p>
+		try {
+			await apoliceService.deletar(Number(id))
+			alert('Apólice apagada com sucesso')
+		} catch (error) {
+			alert('Erro ao deletar a apólice.')
+		}
 
-                <div className="flex justify-around gap-3">
-                    <button
-                        type="button"
-                        onClick={() => navigate('/apolices')}
-                        disabled={isLoading}
-                        className="w-1/2 rounded bg-slate-400 py-2 text-white transition
-                        hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                        Cancelar
-                    </button>
+		setIsLoading(false)
+		retornar()
+	}
 
-                    <button
-                        type="button"
-                        onClick={confirmarExclusao}
-                        disabled={isLoading}
-                        className="flex w-1/2 items-center justify-center gap-2 rounded bg-red-500
-                        py-2 text-white transition hover:bg-red-700
-                        disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                        {isLoading ? <ClipLoader color="#ffffff" size={20} /> : 'Excluir'}
-                    </button>
-                </div>
-            </div>
-        </div>
-    )
+	function retornar() {
+		navigate('/apolices')
+	}
+
+	return (
+		<main className="grow w-full max-w-xl mx-auto px-4 md:px-8 py-24 md:py-28 flex flex-col gap-8">
+			<div className="flex flex-col items-center text-center gap-3 bg-white border border-slate-200 rounded-lg p-8">
+				<div className="flex items-center justify-center w-14 h-14 rounded-full bg-red-50 text-red-600">
+					<WarningCircleIcon size={32} />
+				</div>
+				<h1 className="text-2xl font-semibold text-slate-800">
+					Excluir Apólice
+				</h1>
+
+				<p className="text-base text-slate-600">
+					Tem certeza que deseja excluir a apólice{' '}
+					<span className="font-semibold text-slate-800">
+						Nº {apolice.numeroApolice}
+					</span>
+					?
+				</p>
+
+				<div className="flex items-center justify-center gap-3 mt-4">
+					<button
+						onClick={deletarApolice}
+						disabled={isLoading}
+						className="bg-green-600 text-white text-base px-6 py-3 rounded-lg hover:bg-green-800 transition-colors font-medium disabled:opacity-60 flex items-center justify-center min-w-16"
+					>
+						{isLoading ?
+							<ClipLoader color="#ffffff" size={24} /> :
+							<span>Sim</span>
+						}
+					</button>
+					<button
+						onClick={retornar}
+						className="bg-red-600 text-white text-base px-6 py-3 rounded-lg border border-slate-300 hover:bg-red-700 transition-colors font-medium"
+					>
+						Não
+					</button>
+				</div>
+			</div>
+		</main>
+	)
 }
 
 export default DeletarApolice
