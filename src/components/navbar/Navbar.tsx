@@ -1,90 +1,150 @@
-import { Link } from "react-router-dom"
-import { useState } from "react"
-import { ListIcon, UserIcon } from "@phosphor-icons/react"
- 
+import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import {
+  HouseIcon,
+  InfoIcon,
+  ListIcon,
+  UserIcon
+} from '@phosphor-icons/react'
+
 function Navbar() {
- 
-    const [menuAberto, setMenuAberto] = useState(false);
- 
-    return (
-        <>
-            {/* Navbar fixa no topo, visível em todas as telas */}
-            <div className="w-full flex justify-center py-4 text-white bg-purple-950 md:py-2">
-                <div className="container flex items-center justify-between mx-6 mt-2 text-lg">
-                    {/* Logo da loja, sempre visível, redireciona para Home */}
-                    <Link to="/">
-                        <img
-                            src="https://ik.imagekit.io/lojagames/Conecta.jpg"
-                            alt="Logo"
-                            className="w-50 md:w-60 active:scale-95 transition-transform"
-                        />
-                    </Link>
- 
-                    {/* Menu de navegação desktop/tablet */}
-                    <div className="items-center hidden gap-4 py-4 md:flex">
-                        <Link to="/apolices" className="font-[Fredoka] hover:underline">
-                            Apolices
-                        </Link>
-                        <Link to="/clientes" className="font-[Fredoka] hover:underline">
-                            Clientes
-                        </Link>
-                        <Link to="/cadastrarcliente" className="font-[Fredoka] hover:underline">
-                            Cadastrar cliente
-                        </Link>
- 
-                        <Link
-                            to="/perfil"
-                            aria-label="Minha conta"
-                            className="hover:opacity-80 transition-opacity"
-                        >
-                            <UserIcon size={32} weight="bold" />
-                        </Link>
- 
-                    </div>
- 
-                    {/* Botão hambúrguer (mobile) */}
-                    <button
-                        className="md:hidden text-white p-2"
-                        aria-label="Abrir menu"
-                        onClick={() => setMenuAberto((open) => !open)}
-                    >
-                        <ListIcon size={28} />
-                    </button>
-                </div>
+  const [menuAberto, setMenuAberto] = useState(false)
+
+  function fecharMenu() {
+    setMenuAberto(false)
+  }
+
+  return (
+    <>
+      <header className="w-full border-b border-purple-500/30 bg-gradient-to-r from-purple-950 via-slate-950 to-cyan-950 text-white shadow-lg shadow-purple-950/40">
+        <div className="container flex items-center justify-between px-4 py-3 mx-auto md:px-6">
+          <Link
+            to="/"
+            onClick={fecharMenu}
+            className="flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95"
+            aria-label="Ir para a página inicial"
+          >
+            <img
+              src="https://ik.imagekit.io/lojagames/Conecta.jpg"
+              alt="Logo ConectaLife"
+              className="object-contain w-12 h-12 rounded-full md:w-14 md:h-14"
+            />
+
+            <div className="hidden sm:block">
+              <p className="text-lg font-bold tracking-wide text-cyan-200 md:text-xl">
+                ConectaLife
+              </p>
+
+              <p className="text-xs text-purple-200">
+                Seguro de vida conectado a você
+              </p>
             </div>
- 
-            {/* Menu mobile */}
-            <div
-                className={`${menuAberto ? "flex" : "hidden"} md:hidden flex-col gap-3 w-full bg-purple-950 text-white px-6 py-4 border-t border-purple-900`}           >
-                <Link
-                    to="/apolices"
-                    className="hover:underline"
-                >
-                    Apolices
-                </Link>
-                <Link
-                    to="/clientes"
-                    className="hover:underline"
-                >
-                    Clientes
-                </Link>
-                <Link
-                    to="/cadastrarcliente"
-                    className="hover:underline"
-                >
-                    Cadastrar cliente
-                </Link>
-                <Link
-                    to="/perfil"
-                    className="flex items-center gap-2 hover:underline"
-                >
-                    <UserIcon size={24} weight="bold" />
-                    Minha conta
-                </Link>
- 
-            </div>
-        </>
-    )
+          </Link>
+
+          <nav
+            className="items-center hidden gap-2 md:flex"
+            aria-label="Navegação principal"
+          >
+            <Link
+              to="/"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold rounded-lg transition-colors hover:bg-white/10 hover:text-cyan-200"
+            >
+              <HouseIcon size={20} weight="bold" />
+              Início
+            </Link>
+
+            <Link
+              to="/clientes"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold rounded-lg transition-colors hover:bg-white/10 hover:text-cyan-200"
+            >
+              <UserIcon size={20} weight="bold" />
+              Clientes
+            </Link>
+
+            <Link
+              to="/cadastrarcliente"
+              className="px-4 py-2 text-sm font-bold rounded-lg bg-cyan-600 transition-colors shadow-md shadow-cyan-950/40 hover:bg-cyan-500"
+            >
+              Cadastrar cliente
+            </Link>
+
+            <Link
+              to="/apolices"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold rounded-lg transition-colors hover:bg-white/10 hover:text-cyan-200"
+            >
+              Apólices
+            </Link>
+
+            <Link
+              to="/sobre"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold rounded-lg transition-colors hover:bg-white/10 hover:text-cyan-200"
+            >
+              <InfoIcon size={20} weight="bold" />
+              <span>Sobre</span>
+            </Link>
+          </nav>
+
+          <button
+            type="button"
+            className="p-2 text-white rounded-lg transition-colors md:hidden hover:bg-white/10"
+            aria-label={menuAberto ? 'Fechar menu' : 'Abrir menu'}
+            aria-expanded={menuAberto}
+            onClick={() => setMenuAberto((aberto) => !aberto)}
+          >
+            <ListIcon size={28} weight="bold" />
+          </button>
+        </div>
+      </header>
+
+      <nav
+        className={`${menuAberto ? 'flex' : 'hidden'} flex-col w-full gap-2 px-4 py-4 text-white border-b border-purple-500/30 bg-slate-950 md:hidden`}
+        aria-label="Navegação mobile"
+      >
+        <Link
+          to="/"
+          onClick={fecharMenu}
+          className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-purple-900/50"
+        >
+          <HouseIcon size={20} weight="bold" />
+          Início
+        </Link>
+
+        <Link
+          to="/clientes"
+          onClick={fecharMenu}
+          className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-purple-900/50"
+        >
+          <UserIcon size={20} weight="bold" />
+          Clientes
+        </Link>
+
+        <Link
+          to="/cadastrarcliente"
+          onClick={fecharMenu}
+          className="px-4 py-3 font-bold text-center rounded-lg transition-colors bg-cyan-600 hover:bg-cyan-500"
+        >
+          Cadastrar cliente
+        </Link>
+
+        <Link
+          to="/apolices"
+          onClick={fecharMenu}
+          className="px-4 py-3 rounded-lg transition-colors hover:bg-purple-900/50"
+        >
+          Apólices
+        </Link>
+
+        <Link
+          to="/sobre"
+          onClick={fecharMenu}
+          className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-purple-900/50"
+        >
+          <InfoIcon size={20} weight="bold" />
+          Sobre o projeto
+        </Link>
+      </nav>
+    </>
+  )
 }
- 
+
 export default Navbar
