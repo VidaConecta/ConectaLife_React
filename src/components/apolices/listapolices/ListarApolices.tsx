@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { PlusIcon } from '@phosphor-icons/react';
+import { HeartbeatIcon, PlusIcon } from '@phosphor-icons/react';
 import { SyncLoader } from 'react-spinners';
 import type Apolice from '../../../models/Apolice';
 import { apoliceService } from '../../../services/Apolice';
@@ -58,8 +58,22 @@ function ListarApolices() {
         </div>
 
         {isLoading && (
-          <div className="flex justify-center py-8">
-            <SyncLoader color="#1689F5" size={32} />
+          <div className="flex flex-col items-center justify-center gap-3 py-12">
+            <div className="relative flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl border border-white/70 bg-white/45 shadow-[0_12px_35px_rgba(37,99,235,0.14)] backdrop-blur-md">
+              <div className="absolute inset-x-0 top-1/2 h-px bg-[#7C3AED]/20" />
+
+              <HeartbeatIcon
+                size={42}
+                weight="duotone"
+                className="relative z-10 animate-pulse text-[#7C3AED]"
+              />
+
+              <div className="absolute inset-y-0 left-0 w-20 animate-[loadingPulse_1.8s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-[#7C3AED]/20 to-transparent" />
+            </div>
+
+            <span className="text-sm font-medium text-[#526581]">
+              Carregando apólices...
+            </span>
           </div>
         )}
 
