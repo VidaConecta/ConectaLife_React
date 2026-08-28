@@ -50,11 +50,12 @@ function Footer() {
 
         <div className="flex flex-col gap-2 sm:items-start md:items-end">
           <a
-            href="mailto:contato@conectalife.com"
+            href="mailto:java85.grupo4@gmail.com"
             className="flex w-fit items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs text-[#E9F3FF] shadow-lg backdrop-blur-md transition-all hover:-translate-y-0.5 hover:border-[#74C2FF]/60 hover:bg-white/20"
           >
             <EnvelopeSimpleIcon size={16} className="text-[#74C2FF]" />
-            contato@conectalife.com
+            java85.grupo4@gmail.com
+
           </a>
 
           <p className="text-[11px] text-[#8EACD1]">
