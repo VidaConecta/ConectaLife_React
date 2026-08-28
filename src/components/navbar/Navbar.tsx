@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import logoConectaLife from '../../assets/logo-conectalife.png'
 import { useState } from 'react'
 import {
   BookOpenIcon,
@@ -33,8 +34,8 @@ function Navbar() {
             <div className="absolute inset-0 bg-gradient-to-br from-[#1689F5]/25 via-[#2563EB]/10 to-[#7C3AED]/25" />
 
             <img
-              src="https://ik.imagekit.io/lojagames/Batimentos%20Cardiacos.png"
-              alt="Batimento cardíaco"
+              src={logoConectaLife}
+              alt="Logo ConectaLife"
               className="relative h-7 w-7 object-contain sm:h-8 sm:w-8"
             />
           </div>
