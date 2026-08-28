@@ -70,13 +70,6 @@ function Navbar() {
           </Link>
 
           <Link
-            to="/cadastrarcliente"
-            className="rounded-xl px-3 py-2 transition-all hover:bg-white/65 hover:text-[#2563EB]"
-          >
-            Cadastrar cliente
-          </Link>
-
-          <Link
             to="/apolices"
             className="rounded-xl px-3 py-2 transition-all hover:bg-white/65 hover:text-[#2563EB]"
           >
