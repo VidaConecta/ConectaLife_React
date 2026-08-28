@@ -8,76 +8,63 @@ function Footer() {
   const anoAtual = new Date().getFullYear()
 
   return (
-    <footer className="w-full mt-auto text-slate-200 border-t border-purple-500/30 bg-gradient-to-r from-purple-950 via-slate-950 to-cyan-950">
-      
-      <div className="container grid grid-cols-1 gap-8 px-6 py-10 mx-auto md:grid-cols-3 md:px-8">
+    <footer className="relative mt-auto w-full overflow-hidden border-t border-[#4B8ED7]/35 bg-[#102A4C] text-[#D8E9FF]">
+      <div className="pointer-events-none absolute -left-24 -top-24 h-56 w-56 rounded-full bg-[#1689F5]/20 blur-3xl" />
 
-        {/* ConectaLife */}
-        <div className="flex flex-col gap-3">
+      <div className="pointer-events-none absolute -bottom-24 -right-24 h-56 w-56 rounded-full bg-[#7C3AED]/20 blur-3xl" />
+
+      <div className="absolute left-1/2 top-0 h-px w-3/4 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#48A9FF] to-[#A78BFA]" />
+
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-6 px-6 py-6 sm:grid-cols-2 md:grid-cols-3 md:px-12 md:py-7">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <HeartIcon
-              size={26}
+              size={22}
               weight="fill"
-              className="text-pink-400"
+              className="text-[#74C2FF]"
             />
 
-            <p className="text-xl font-bold tracking-wide text-white">
-              ConectaLife
+            <p className="text-lg font-black tracking-tight">
+              <span className="bg-gradient-to-r from-[#74C2FF] via-[#48A9FF] to-[#B69CFF] bg-clip-text text-transparent">
+                Conecta
+              </span>
+              <span className="text-white">Life</span>
             </p>
           </div>
 
-          <p className="max-w-sm text-sm leading-6 text-slate-300">
-             Proteção para estudantes da tecnologia e 
-             nômades digitais em qualquer lugar do mundo.
+          <p className="max-w-xs text-xs leading-relaxed text-[#BAD2EF]">
+            Proteção para estudantes de tecnologia e nômades digitais em qualquer lugar do mundo.
           </p>
         </div>
 
-        {/* Sobre o projeto */}
-        <div className="flex flex-col gap-3">
-          <p className="flex items-center gap-2 text-lg font-bold text-cyan-200">
-    <HeartIcon size={22} weight="fill" />
-    Nosso propósito
-  </p>
-
-        <p className="max-w-sm text-sm leading-6 text-slate-300">
-          Cuidar do presente e ajudar a construir
-          um futuro mais seguro para todos.
-        </p>
-
-          <div className="flex items-center gap-2 text-sm text-purple-200">
-            <UsersIcon size={18} />
-            Desenvolvido por uma equipe de estudantes.
-          </div>
-        </div>
-
-        {/* Contato */}
-        <div className="flex flex-col gap-3">
-          <p className="flex items-center gap-2 text-lg font-bold text-cyan-200">
-            <EnvelopeSimpleIcon size={22} weight="bold" />
-            Contato
+        <div className="flex flex-col gap-2">
+          <p className="flex items-center gap-2 text-sm font-semibold text-[#D8E9FF]">
+            <UsersIcon size={17} className="text-[#74C2FF]" />
+            Nosso propósito
           </p>
 
+          <p className="max-w-xs text-xs leading-relaxed text-[#BAD2EF]">
+            Cuidar do presente e ajudar a construir um futuro mais seguro para todos.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-2 sm:items-start md:items-end">
           <a
             href="mailto:contato@conectalife.com"
-            className="w-fit text-sm transition-colors hover:text-cyan-200"
+            className="flex w-fit items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs text-[#E9F3FF] shadow-lg backdrop-blur-md transition-all hover:-translate-y-0.5 hover:border-[#74C2FF]/60 hover:bg-white/20"
           >
+            <EnvelopeSimpleIcon size={16} className="text-[#74C2FF]" />
             contato@conectalife.com
           </a>
 
-          <p className="text-sm text-slate-300">
-            (00) 0000-0000
-          </p>
-
-          <p className="max-w-xs text-sm leading-6 text-slate-300">
-            Consulte sua apólice na área de clientes.
+          <p className="text-[11px] text-[#8EACD1]">
+            © {anoAtual}{' '}
+            <span className="font-medium text-[#D8E9FF]">
+              ConectaLife
+            </span>
+            . Todos os direitos reservados.
           </p>
         </div>
-
-      </div>
-
-      {/* Direitos autorais */}
-      <div className="px-4 py-4 text-sm text-center border-t border-white/10 text-slate-300">
-        ConectaLife &copy; {anoAtual} — Todos os direitos reservados
       </div>
     </footer>
   )

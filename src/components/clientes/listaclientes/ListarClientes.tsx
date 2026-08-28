@@ -32,17 +32,31 @@ function ListarClientes() {
   }
 
   return (
-    <div className="flex justify-center w-full overflow-x-hidden">
-      <div className="box-border w-full px-4 py-6 mx-auto mt-8 mb-4 max-w-7xl sm:px-6 md:px-8 lg:px-12">
-        <div className="flex flex-col items-center justify-between gap-4 mb-6 sm:flex-row">
-          <h1 className="text-3xl text-center md:text-4xl">
-            Clientes
-          </h1>
+    <section className="relative isolate min-h-screen overflow-hidden bg-[#EDF5FF] px-4 pb-12 pt-24 sm:px-6 sm:pt-28 lg:px-16">
+      <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-[#1689F5]/20 blur-3xl" />
 
+      <div className="pointer-events-none absolute -bottom-36 -right-32 h-96 w-96 rounded-full bg-[#7C3AED]/20 blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl">
+        <header className="mb-8">
+          <div className="mb-3 flex items-center gap-3">
+            <div className="h-9 w-1 rounded-full bg-gradient-to-b from-[#1689F5] to-[#7C3AED]" />
+
+            <h1 className="bg-gradient-to-r from-[#126CC5] via-[#2563EB] to-[#6D28D9] bg-clip-text text-3xl font-bold tracking-tight text-transparent">
+              Clientes
+            </h1>
+          </div>
+
+          <p className="max-w-2xl text-sm leading-6 text-[#526581]">
+            Gerencie sua base de clientes de forma organizada e centralizada.
+          </p>
+        </header>
+
+        <div className="mb-6 flex items-center justify-between gap-4">
           <button
             type="button"
             onClick={() => navigate('/clientes/cadastrar')}
-            className="px-6 py-2 text-white rounded bg-teal-600 hover:bg-teal-700"
+            className="cursor-pointer rounded-lg bg-gradient-to-r from-[#1689F5] via-[#2563EB] to-[#6D28D9] px-6 py-3 text-base font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)] transition-all hover:-translate-y-0.5 hover:brightness-110"
           >
             Cadastrar Cliente
           </button>
@@ -50,29 +64,29 @@ function ListarClientes() {
 
         {isLoading && (
           <div className="flex justify-center py-8">
-            <SyncLoader color="#00aebd" size={20} />
+            <SyncLoader color="#1689F5" size={20} />
           </div>
         )}
 
         {!isLoading && erro && (
-          <p className="my-8 font-bold text-center text-red-600">
+          <p className="my-8 font-bold text-center text-rose-600">
             {erro}
           </p>
         )}
 
         {!isLoading && !erro && clientes.length === 0 && (
-          <p className="block my-8 text-3xl text-center">
+          <p className="block my-8 text-3xl text-center text-[#526581]">
             Nenhum cliente foi encontrado!
           </p>
         )}
 
-        <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6 md:mb-0">
+        <div className="grid grid-cols-1 gap-6 mb-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-8 md:mb-0">
           {clientes.map((cliente) => (
             <CardCliente key={cliente.id} cliente={cliente} />
           ))}
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 
