@@ -22,8 +22,8 @@ function Home() {
               Gestão de seguros de vida
             </span>
 
-            <h1 className="text-3xl font-semibold tracking-tight text-[#172B4D] md:text-4xl">
-              Bem-vinde ao ConectaLife!
+            <h1 className="max-w-3xl bg-gradient-to-r from-[#126CC5] via-[#2563EB] to-[#6D28D9] bg-clip-text text-3xl font-bold text-transparent md:text-5xl">
+              Bem-vinde à ConectaLife
             </h1>
 
             <p className="max-w-xl text-base leading-7 text-[#526581]">

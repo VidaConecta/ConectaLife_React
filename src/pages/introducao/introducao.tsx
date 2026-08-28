@@ -20,8 +20,8 @@ function Introducao() {
               ConectaLife
             </p>
 
-            <h1 className="max-w-3xl bg-gradient-to-r from-[#126CC5] via-[#2563EB] to-[#6D28D9] bg-clip-text text-3xl font-bold text-transparent md:text-5xl">
-              Bem-vindo à ConectaLife
+            <h1 className="max-w-3xl bg-gradient-to-r from-[#126CC5] via-[#2563EB] to-[#6D28D9] bg-clip-text text-3xl font-bold text-transparent md:text-4xl">
+              Sua jornada de proteção começa aqui
             </h1>
 
             <p className="mt-5 max-w-3xl text-base leading-relaxed text-[#526581] md:text-lg">
@@ -31,7 +31,7 @@ function Introducao() {
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
-                to="/clientes"
+                to="/clientes/cadastrar"
                 className="rounded-lg bg-gradient-to-r from-[#1689F5] via-[#2563EB] to-[#6D28D9] px-6 py-3 text-center font-medium text-white shadow-[0_8px_20px_rgba(37,99,235,0.28)] transition-all hover:-translate-y-0.5 hover:brightness-110"
               >
                 Cadastrar cliente
